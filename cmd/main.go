@@ -6,13 +6,14 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"flag"
-	log "github.com/Sirupsen/logrus"
-	"github.com/zmap/zcrypto/x509"
-	"github.com/zmap/zlint/zlint"
 	"os"
 	"runtime"
 	"sync"
+
+	log "github.com/Sirupsen/logrus"
+	"github.com/zmap/zcrypto/x509"
 	"github.com/zmap/zlint/lints"
+	"github.com/zmap/zlint/zlint"
 )
 
 var ( //flags
@@ -47,15 +48,15 @@ func scannerSplitPEM(data []byte, atEOF bool) (int, []byte, error) {
 	return 0, nil, nil
 }
 
-func appendZLintToCertificate(cert *x509.Certificate, lintResult *lints.LintReport) ([]byte, error){
+func appendZLintToCertificate(cert *x509.Certificate, lintResult *lints.LintReport) ([]byte, error) {
 	return json.Marshal(struct {
-		Raw	[]byte		   `json:"raw,omitempty"`
-		Parsed  *x509.Certificate  `json:"parsed,omitempty"`
-		ZLint	*lints.LintReport  `json:"zlint,omitempty"`
+		Raw    []byte            `json:"raw,omitempty"`
+		Parsed *x509.Certificate `json:"parsed,omitempty"`
+		ZLint  *lints.LintReport `json:"zlint,omitempty"`
 	}{
-		Raw:	cert.Raw,
-		Parsed:	cert,
-		ZLint:	lintResult,
+		Raw:    cert.Raw,
+		Parsed: cert,
+		ZLint:  lintResult,
 	})
 }
 
