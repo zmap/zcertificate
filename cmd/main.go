@@ -25,6 +25,7 @@ import (
 	"sync"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/zmap/zcertificate"
 	"github.com/zmap/zcrypto/x509"
 	"github.com/zmap/zlint/lints"
 	"github.com/zmap/zlint/zlint"
@@ -51,15 +52,6 @@ func init() {
 	flag.BoolVar(&crashIfParseFail, "fatal-parse-errors", false, "Fatally crashes if a certificate cannot be parsed. Log by default.")
 	flag.StringVar(&format, "format", "pem", "one of {pem, base64}")
 	flag.Parse()
-}
-
-func scannerSplitPEM(data []byte, atEOF bool) (int, []byte, error) {
-	block, rest := pem.Decode(data)
-	if block != nil {
-		size := len(data) - len(rest)
-		return size, data[:size], nil
-	}
-	return 0, nil, nil
 }
 
 func appendZLintToCertificate(cert *x509.Certificate, lintResult *lints.LintReport) ([]byte, error) {
@@ -101,7 +93,7 @@ func ReadCertificatePEM(out chan<- []byte, filename string, wg *sync.WaitGroup) 
 	if file, err := os.Open(filename); err == nil {
 		defer file.Close()
 		scanner := bufio.NewScanner(file)
-		scanner.Split(scannerSplitPEM)
+		scanner.Split(zcertificate.ScannerSplitPEM)
 		for scanner.Scan() {
 			certBytes, _ := pem.Decode(scanner.Bytes())
 			if certBytes == nil {
