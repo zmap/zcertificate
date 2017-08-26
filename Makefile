@@ -1,9 +1,15 @@
 all: zcertificate
 
-zcertificate:
-	cd cmd && go build && mv cmd ../zcertificate
+cmd/zcertificate/zcertificate:
+	cd cmd/zcertificate && go build
 
-.PHONY: zcertificate clean
+zcertificate: cmd/zcertificate/zcertificate
+	cp $< zcertificate
+
+.PHONY: cmd/zcertificate/zcertificate zcertificate clean test
 
 clean:
-	rm -f cmd/cmd zcertificate
+	rm -f cmd/zcertificate/zcertificate zcertificate
+
+test:
+	go test ./...
