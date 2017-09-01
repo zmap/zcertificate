@@ -27,7 +27,6 @@ import (
 	"github.com/zmap/zcertificate"
 	"github.com/zmap/zcrypto/x509"
 	"github.com/zmap/zlint"
-	"github.com/zmap/zlint/lints"
 )
 
 var ( //flags
@@ -47,15 +46,15 @@ func init() {
 	flag.Parse()
 }
 
-func appendZLintToCertificate(cert *x509.Certificate, lintResult *lints.ZLintResult) ([]byte, error) {
+func appendZLintToCertificate(cert *x509.Certificate, zl *zlint.ResultSet) ([]byte, error) {
 	return json.Marshal(struct {
-		Raw    []byte             `json:"raw,omitempty"`
-		Parsed *x509.Certificate  `json:"parsed,omitempty"`
-		ZLint  *lints.ZLintResult `json:"zlint,omitempty"`
+		Raw    []byte            `json:"raw,omitempty"`
+		Parsed *x509.Certificate `json:"parsed,omitempty"`
+		ZLint  *zlint.ResultSet  `json:"zlint,omitempty"`
 	}{
 		Raw:    cert.Raw,
 		Parsed: cert,
-		ZLint:  lintResult,
+		ZLint:  zl,
 	})
 }
 
