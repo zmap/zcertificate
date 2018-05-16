@@ -78,7 +78,9 @@ func BreakBase64ByLineAsync(out chan []byte, in io.Reader, wg *sync.WaitGroup) e
 		if err == io.EOF {
 			break
 		}
-		return err
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
