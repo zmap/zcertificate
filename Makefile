@@ -1,15 +1,18 @@
-all: zcertificate
+CMDS = zcertificate
+CMD_PREFIX = ./cmd/
+GO_ENV = GO111MODULE=on
+BUILD = $(GO_ENV) go build -mod=vendor
+TEST = $(GO_ENV) GORACE=halt_on_error=1 go test -mod=vendor -race
 
-cmd/zcertificate/zcertificate:
-	cd cmd/zcertificate && go build
+all: $(CMDS)
 
-zcertificate: cmd/zcertificate/zcertificate
-	cp $< zcertificate
-
-.PHONY: cmd/zcertificate/zcertificate zcertificate clean test
+zcertificate: $(CMD_PREFIX)$(@)
+	$(BUILD) $(CMD_PREFIX)$(@)
 
 clean:
-	rm -f cmd/zcertificate/zcertificate zcertificate
+	rm -f $(CMDS)
 
 test:
-	go test ./...
+	$(TEST) ./...
+
+.PHONY: clean test zcertificate
