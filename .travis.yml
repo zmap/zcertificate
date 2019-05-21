@@ -1,13 +1,14 @@
 language: go
+
 dist: trusty
+
 go:
-- 1.10.2
-before_install:
-- go get ./...
-- go get -t ./...
+  - "1.12"
+
 script:
-- make
-- make test
+  - make
+  - make test
+
 notifications:
   email:
   - zmap-devel@umich.edu
