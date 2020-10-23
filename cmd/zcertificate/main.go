@@ -26,7 +26,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/zmap/zcertificate"
 	"github.com/zmap/zcrypto/x509"
-	"github.com/zmap/zlint"
+	zlint "github.com/zmap/zlint/v2"
 )
 
 var ( //flags

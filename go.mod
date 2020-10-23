@@ -4,6 +4,6 @@ go 1.14
 
 require (
 	github.com/sirupsen/logrus v1.4.2
-	github.com/zmap/zcrypto v0.0.0-20200225153232-2177ed15981c
-	github.com/zmap/zlint v0.0.0-20190516161541-9047d02cf65a
+	github.com/zmap/zcrypto v0.0.0-20200513165325-16679db567ff
+	github.com/zmap/zlint/v2 v2.2.1
 )
