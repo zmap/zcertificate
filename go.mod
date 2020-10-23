@@ -1,4 +1,4 @@
-module github.com/CBitLabs/zcertificate
+module github.com/zmap/zcertificate
 
 require (
 	github.com/sirupsen/logrus v1.4.2
