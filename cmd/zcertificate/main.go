@@ -75,12 +75,12 @@ func processCertificate(in <-chan []byte, out chan<- []byte, wg *sync.WaitGroup)
 			if !jsonIfParseFail {
 				continue
 			}
-                }
-                // The certificate was parsed (or not). Run ZLint on it.
-                var zlintResult *zlint.ResultSet;
-                if parsed != nil {
-                        zlintResult = zlint.LintCertificate(parsed)
-                }
+		}
+		// The certificate was parsed (or not). Run ZLint on it.
+		var zlintResult *zlint.ResultSet;
+		if parsed != nil {
+			zlintResult = zlint.LintCertificate(parsed)
+		}
 
 		jsonResult, err := appendZLintToCertificate(raw, parsed, zlintResult, err)
 		if err != nil {
@@ -102,10 +102,10 @@ func main() {
 	log.SetLevel(log.InfoLevel)
 	runtime.GOMAXPROCS(numProcs)
 
-        // Validate flag combinations
-        if jsonIfParseFail && crashIfParseFail {
-                log.Fatal("at most one of -json-parse-errors and -fatal-parse-errors may be specified")
-        }
+	// Validate flag combinations
+	if jsonIfParseFail && crashIfParseFail {
+		log.Fatal("at most one of -json-parse-errors and -fatal-parse-errors may be specified")
+	}
 
 	// Open the input file
 	var inputFile *os.File
