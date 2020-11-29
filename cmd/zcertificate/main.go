@@ -84,8 +84,8 @@ func processCertificate(in <-chan []byte, out chan<- []byte, wg *sync.WaitGroup)
 func writeOutput(in <-chan []byte, out io.Writer, wg *sync.WaitGroup) {
 	defer wg.Done()
 	for json := range in {
-		out.Write(json)
-		out.Write([]byte{'\n'})
+		_, _ = out.Write(json)
+		_, _ = out.Write([]byte{'\n'})
 	}
 }
 
@@ -133,9 +133,13 @@ func main() {
 	readerWG.Add(1)
 	switch f := strings.ToLower(format); f {
 	case "pem":
-		go zcertificate.BreakPEMAsync(incomingCertBytes, inputFile, "CERTIFICATE", &readerWG)
+		go func() {
+			_ = zcertificate.BreakPEMAsync(incomingCertBytes, inputFile, "CERTIFICATE", &readerWG)
+		}()
 	case "base64":
-		go zcertificate.BreakBase64ByLineAsync(incomingCertBytes, inputFile, &readerWG)
+		go func() {
+			_ = zcertificate.BreakBase64ByLineAsync(incomingCertBytes, inputFile, &readerWG)
+		}()
 	default:
 		log.Fatalf("invalid --format: %s", format)
 	}
