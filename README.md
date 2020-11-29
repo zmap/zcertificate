@@ -1,19 +1,54 @@
 # ZCertificate
 
-[![Build Status](https://travis-ci.org/zmap/zcertificate.svg?branch=master)](https://travis-ci.org/zmap/zcertificate)
+[![CI Status](https://github.com/zmap/zcertificate/workflows/Go/badge.svg)](https://github.com/zmap/zcertificate/actions?query=workflow%3AGo)
+[![Integration Tests](https://github.com/zmap/zcertificate/workflows/integration-test/badge.svg)](https://github.com/zmap/zcertificate/actions?query=workflow%3Aintegration-test)
+[![Lint Status](https://github.com/zmap/zcertificate/workflows/golangci-lint/badge.svg)](https://github.com/zmap/zcertificate/actions?query=workflow%3Agolangci-lint)
 
 ZCertificate parses X.509 certificates and runs [ZLint](https://github.com/zmap/zlint).
 
+### Installing ZCertificate
+
+1. Pick an [ZCertificate release][releases] and download the `.tar.gz` archive for
+   your architecture (for example `Linux_x86_64.tar.gz`):
+
+       wget https://github.com/zmap/zcertificate/releases/download/v0.0.1/zcertificate_0.0.1_Linux_x86_64.tar.gz
+
+1. Extract the archive and change into the extracted directory:
+
+       tar xf zcertificate*.tar.gz
+       cd zcertificate*
+
+1. Make the `zcertificate` program executable:
+
+       chmod +x zcertificate 
+
+1. Run the `zcertificate` program:
+
+       ./zcertificate
+
+[releases]: https://github.com/zmap/zcertificate/releases
+
+### Building from source
+
+Building ZCertificate from source requires [Go 1.15.x or
+newer](https://golang.org/doc/install). 
+
+Assume the `go` command is in your `$PATH` you can build ZCertificate from
+source with:
+
+```bash
+go get github.com/zmap/zcertificate/cmd/zcertificate
+```
 
 ### Usage
-
-First, grab the code `go get github.com/zmap/zcertificate/cmd/zcertificate`
 
 ```
 $ ./zcertificate --help
 Usage of ./zcertificate:
   -fatal-parse-errors
     	Halt if a certificate cannot be parsed. Default is to log.
+  -json-parse-errors
+    	Output json if a certificate cannot be parsed. Default is not to.
   -format string
     	one of {pem, base64} (default "pem")
   -output-file string

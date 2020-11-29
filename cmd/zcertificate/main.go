@@ -26,7 +26,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/zmap/zcertificate"
 	"github.com/zmap/zcrypto/x509"
-	zlint "github.com/zmap/zlint/v2"
+	zlint "github.com/zmap/zlint/v3"
 )
 
 var ( //flags
@@ -34,6 +34,7 @@ var ( //flags
 	workers          int
 	numProcs         int
 	crashIfParseFail bool
+	jsonIfParseFail  bool
 	format           string
 )
 
@@ -42,19 +43,22 @@ func init() {
 	flag.IntVar(&workers, "workers", 1, "Specifies number of goroutines to use to parse and lint certificates.")
 	flag.IntVar(&numProcs, "procs", 0, "Specifies number of processes to run on. Default is 0, meaning use current value of $GOMAXPROCS.")
 	flag.BoolVar(&crashIfParseFail, "fatal-parse-errors", false, "Halt if a certificate cannot be parsed. Default is to log.")
+	flag.BoolVar(&jsonIfParseFail, "json-parse-errors", false, "Output json if a certificate cannot be parsed. Default is not to.")
 	flag.StringVar(&format, "format", "pem", "one of {pem, base64}")
 	flag.Parse()
 }
 
-func appendZLintToCertificate(cert *x509.Certificate, zl *zlint.ResultSet) ([]byte, error) {
+func appendZLintToCertificate(raw []byte, cert *x509.Certificate, zl *zlint.ResultSet, parseError error) ([]byte, error) {
 	return json.Marshal(struct {
-		Raw    []byte            `json:"raw,omitempty"`
-		Parsed *x509.Certificate `json:"parsed,omitempty"`
-		ZLint  *zlint.ResultSet  `json:"zlint,omitempty"`
+		Raw        []byte            `json:"raw,omitempty"`
+		Parsed     *x509.Certificate `json:"parsed,omitempty"`
+		ZLint      *zlint.ResultSet  `json:"zlint,omitempty"`
+		ParseError error             `json:"error,omitempty"`
 	}{
-		Raw:    cert.Raw,
-		Parsed: cert,
-		ZLint:  zl,
+		Raw:        raw,
+		Parsed:     cert,
+		ZLint:      zl,
+		ParseError: parseError,
 	})
 }
 
@@ -68,12 +72,17 @@ func processCertificate(in <-chan []byte, out chan<- []byte, wg *sync.WaitGroup)
 			if crashIfParseFail {
 				log.Fatal("parsing errors are fatal")
 			}
-			continue
+			if !jsonIfParseFail {
+				continue
+			}
+		}
+		// The certificate was parsed (or not). Run ZLint on it.
+		var zlintResult *zlint.ResultSet
+		if parsed != nil {
+			zlintResult = zlint.LintCertificate(parsed)
 		}
 
-		// The certificate was parsed. Run ZLint on it.
-		zlintResult := zlint.LintCertificate(parsed)
-		jsonResult, err := appendZLintToCertificate(parsed, zlintResult)
+		jsonResult, err := appendZLintToCertificate(raw, parsed, zlintResult, err)
 		if err != nil {
 			log.Fatal("could not marshal output JSON")
 		}
@@ -84,14 +93,19 @@ func processCertificate(in <-chan []byte, out chan<- []byte, wg *sync.WaitGroup)
 func writeOutput(in <-chan []byte, out io.Writer, wg *sync.WaitGroup) {
 	defer wg.Done()
 	for json := range in {
-		out.Write(json)
-		out.Write([]byte{'\n'})
+		_, _ = out.Write(json)
+		_, _ = out.Write([]byte{'\n'})
 	}
 }
 
 func main() {
 	log.SetLevel(log.InfoLevel)
 	runtime.GOMAXPROCS(numProcs)
+
+	// Validate flag combinations
+	if jsonIfParseFail && crashIfParseFail {
+		log.Fatal("at most one of -json-parse-errors and -fatal-parse-errors may be specified")
+	}
 
 	// Open the input file
 	var inputFile *os.File
@@ -133,9 +147,13 @@ func main() {
 	readerWG.Add(1)
 	switch f := strings.ToLower(format); f {
 	case "pem":
-		go zcertificate.BreakPEMAsync(incomingCertBytes, inputFile, "CERTIFICATE", &readerWG)
+		go func() {
+			_ = zcertificate.BreakPEMAsync(incomingCertBytes, inputFile, "CERTIFICATE", &readerWG)
+		}()
 	case "base64":
-		go zcertificate.BreakBase64ByLineAsync(incomingCertBytes, inputFile, &readerWG)
+		go func() {
+			_ = zcertificate.BreakBase64ByLineAsync(incomingCertBytes, inputFile, &readerWG)
+		}()
 	default:
 		log.Fatalf("invalid --format: %s", format)
 	}
