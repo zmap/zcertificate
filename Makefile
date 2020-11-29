@@ -1,8 +1,7 @@
 CMDS = zcertificate
 CMD_PREFIX = ./cmd/
-GO_ENV = GO111MODULE=on
 BUILD = $(GO_ENV) go build
-TEST = $(GO_ENV) GORACE=halt_on_error=1 go test -race
+TEST = $(GO_ENV) GORACE=halt_on_error=1 go test -v -race
 
 all: $(CMDS)
 

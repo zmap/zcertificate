@@ -1,6 +1,6 @@
 module github.com/zmap/zcertificate
 
-go 1.14
+go 1.15
 
 require (
 	github.com/sirupsen/logrus v1.4.2
