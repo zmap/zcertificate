@@ -26,7 +26,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/zmap/zcertificate"
 	"github.com/zmap/zcrypto/x509"
-	zlint "github.com/zmap/zlint/v2"
+	zlint "github.com/zmap/zlint/v3"
 )
 
 var ( //flags
@@ -50,15 +50,15 @@ func init() {
 
 func appendZLintToCertificate(raw []byte, cert *x509.Certificate, zl *zlint.ResultSet, parseError error) ([]byte, error) {
 	return json.Marshal(struct {
-		Raw    []byte            `json:"raw,omitempty"`
-		Parsed *x509.Certificate `json:"parsed,omitempty"`
-		ZLint  *zlint.ResultSet  `json:"zlint,omitempty"`
-		ParseError error         `json:"error,omitempty"`
+		Raw        []byte            `json:"raw,omitempty"`
+		Parsed     *x509.Certificate `json:"parsed,omitempty"`
+		ZLint      *zlint.ResultSet  `json:"zlint,omitempty"`
+		ParseError error             `json:"error,omitempty"`
 	}{
-		Raw:    raw,
-		Parsed: cert,
-		ZLint:  zl,
-		ParseError:  parseError,
+		Raw:        raw,
+		Parsed:     cert,
+		ZLint:      zl,
+		ParseError: parseError,
 	})
 }
 
@@ -77,7 +77,7 @@ func processCertificate(in <-chan []byte, out chan<- []byte, wg *sync.WaitGroup)
 			}
 		}
 		// The certificate was parsed (or not). Run ZLint on it.
-		var zlintResult *zlint.ResultSet;
+		var zlintResult *zlint.ResultSet
 		if parsed != nil {
 			zlintResult = zlint.LintCertificate(parsed)
 		}
