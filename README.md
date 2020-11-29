@@ -47,6 +47,8 @@ $ ./zcertificate --help
 Usage of ./zcertificate:
   -fatal-parse-errors
     	Halt if a certificate cannot be parsed. Default is to log.
+  -json-parse-errors
+    	Output json if a certificate cannot be parsed. Default is not to.
   -format string
     	one of {pem, base64} (default "pem")
   -output-file string
