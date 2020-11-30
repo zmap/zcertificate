@@ -7,7 +7,7 @@ ZCertificate parses X.509 certificates and runs [ZLint](https://github.com/zmap/
 
 ### Installing ZCertificate
 
-1. Pick an [ZCertificate release][releases] and download the `.tar.gz` archive for
+1. Pick a [ZCertificate release][releases] and download the `.tar.gz` archive for
    your architecture (for example `Linux_x86_64.tar.gz`):
 
        wget https://github.com/zmap/zcertificate/releases/download/v0.0.1/zcertificate_0.0.1_Linux_x86_64.tar.gz
@@ -32,7 +32,7 @@ ZCertificate parses X.509 certificates and runs [ZLint](https://github.com/zmap/
 Building ZCertificate from source requires [Go 1.15.x or
 newer](https://golang.org/doc/install). 
 
-Assume the `go` command is in your `$PATH` you can build ZCertificate from
+Assuming the `go` command is in your `$PATH` you can build ZCertificate from
 source with:
 
 ```bash
