@@ -1,7 +1,6 @@
 # ZCertificate
 
 [![CI Status](https://github.com/zmap/zcertificate/workflows/Go/badge.svg)](https://github.com/zmap/zcertificate/actions?query=workflow%3AGo)
-[![Integration Tests](https://github.com/zmap/zcertificate/workflows/integration-test/badge.svg)](https://github.com/zmap/zcertificate/actions?query=workflow%3Aintegration-test)
 [![Lint Status](https://github.com/zmap/zcertificate/workflows/golangci-lint/badge.svg)](https://github.com/zmap/zcertificate/actions?query=workflow%3Agolangci-lint)
 
 ZCertificate parses X.509 certificates and runs [ZLint](https://github.com/zmap/zlint).
