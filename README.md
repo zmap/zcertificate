@@ -29,7 +29,7 @@ ZCertificate parses X.509 certificates and runs [ZLint](https://github.com/zmap/
 
 ### Building from source
 
-Building ZCertificate from source requires [Go 1.15.x or
+Building ZCertificate from source requires [Go 1.16.x or
 newer](https://golang.org/doc/install). 
 
 Assuming the `go` command is in your `$PATH` you can build ZCertificate from
